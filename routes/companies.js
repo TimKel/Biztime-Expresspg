@@ -92,7 +92,11 @@ router.delete('/:code', async (req, res, next) => {
     try{
         const code = req.params.code;
         const results = await db.query(`DELETE FROM companies WHERE code=$1`, [code])
-        return res.send(`{ msg: Deleted ${code}}`)
+        
+        if(results.rows.length === 0){
+            throw new ExpressError(`Can't delete company with code ${code}`, 404)
+        }
+        return res.send({ msg: "Deleted" })
     }catch(err){
         next(err)
     }
